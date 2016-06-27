@@ -66,14 +66,19 @@ tshirtDesignSelect.onchange = function () {
 
 //4. --REGISTER FOR ACTIVITIES SECTION--
 	//a) don't allow to select an event which is at the same time as selected before
-	$('input[name=all]').change(function () {
-		if (this.checked) {
-			$('.activities input:not(input[name=all])').attr('disabled', true);
-			console.log('checked');
-		} else {
-			$('.activities input').attr('disabled', false);
-		};
-	})
+	var activityList2 = []; 
+	var activitiesList = document.getElementsByClassName('activities')[0].children;
+	for (var i = 0; i < activitiesList.length; i++) {
+		activityList2.push(activitiesList[i]);
+	};
+	activityList2.forEach(function (element) {
+		var input = element.firstChild;
+		element.onchange = function () {
+			if(input.checked) {
+				console.log(element.innerText);
+			}
+		}
+	});
 	//b) when user unchecks the competing event he shuld be able to select the event
 	//c) as user selects activities total to pay is displayed below checkboxes
 //5. --PAYMENT INFO SECTION--
