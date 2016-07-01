@@ -57,7 +57,7 @@ button {
 	font-size: 1.25em;	
 }
 
-legend {
+legend, #total {
 	font-weight: 500;
 	padding-top: .5em;
 	border-top: 2px solid #679cb3;

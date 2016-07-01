@@ -74,12 +74,28 @@ tshirtDesignSelect.onchange = function () {
 	activityList2.forEach(function (element) {
 		var input = element.firstChild;
 		element.onchange = function () {
-			if(input.checked) {
-				console.log(element.innerText);
-			}
-		}
+			for (var i = 0; i < activityList2.length; i++) {
+				if(input.checked) {
+					//var price = element.innerText.match(/\$(\d+)/)[1];
+					//console.log(price);
+					var datePattern = /(\w+)\s[\d+](\w+)-(\d+)(\w+)/;
+					if(datePattern.test(activityList2[i].innerText)) {
+						var date = element.innerText.match(datePattern)[0];
+						//console.log(date);
+						var otherDate = activityList2[i].innerText.match(datePattern)[0];
+						if (date == otherDate && activityList2.indexOf(element) != activityList2.indexOf(activityList2[i])) {
+							activityList2[i].firstChild.disabled = true;
+						}
+					}
+					
+				//b) when user unchecks the competing event he shuld be able to select the event	
+				} else {
+					activityList2[i].firstChild.disabled = false;
+				}
+			};
+		};
 	});
-	//b) when user unchecks the competing event he shuld be able to select the event
+	
 	//c) as user selects activities total to pay is displayed below checkboxes
 //5. --PAYMENT INFO SECTION--
 	//a) user selects the default 'Credit card' payment option, display the #credit-card div and hide the rest
