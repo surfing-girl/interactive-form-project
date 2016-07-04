@@ -66,35 +66,66 @@ tshirtDesignSelect.onchange = function () {
 
 //4. --REGISTER FOR ACTIVITIES SECTION--
 	//a) don't allow to select an event which is at the same time as selected before
-	var activityList2 = []; 
-	var activitiesList = document.getElementsByClassName('activities')[0].children;
-	for (var i = 0; i < activitiesList.length; i++) {
-		activityList2.push(activitiesList[i]);
-	};
-	activityList2.forEach(function (element) {
-		var input = element.firstChild;
-		element.onchange = function () {
-			for (var i = 0; i < activityList2.length; i++) {
-				if(input.checked) {
-					//var price = element.innerText.match(/\$(\d+)/)[1];
-					//console.log(price);
-					var datePattern = /(\w+)\s[\d+](\w+)-(\d+)(\w+)/;
-					if(datePattern.test(activityList2[i].innerText)) {
-						var date = element.innerText.match(datePattern)[0];
-						//console.log(date);
-						var otherDate = activityList2[i].innerText.match(datePattern)[0];
-						if (date == otherDate && activityList2.indexOf(element) != activityList2.indexOf(activityList2[i])) {
-							activityList2[i].firstChild.disabled = true;
-						}
-					}
-					
-				//b) when user unchecks the competing event he shuld be able to select the event	
-				} else {
-					activityList2[i].firstChild.disabled = false;
-				}
+
+
+function ActivitiesRegistration () {
+	var activitiesListElements = document.getElementsByClassName('activities')[0].children;
+	this.activitiesList = [];
+	this.datePattern = /(\w+)\s[\d+](\w+)-(\d+)(\w+)/;
+	this.pricePattern = /\$(\d+)/;
+	this.date = '';
+	
+	for (var i = 0; i < activitiesListElements.length; i++) {
+		this.activitiesList.push(activitiesListElements[i]);
+	}
+}
+
+ActivitiesRegistration.prototype.sameDateCheckboxDisabled = function(element) {
+	for (var i = 0; i < this.activitiesList.length; i++) {
+		if(this.datePattern.test(this.activitiesList[i].innerText)) {
+			var otherDate = this.activitiesList[i].innerText.match(this.datePattern)[0];
+			if (this.date == otherDate && this.activitiesList.indexOf(element) != this.activitiesList.indexOf(this.activitiesList[i])) {
+				this.activitiesList[i].firstChild.disabled = true;
 			};
 		};
-	});
+		
+	};
+};
+
+ActivitiesRegistration.prototype.checkboxesEnabled = function() {
+	for (var i = 0; i < this.activitiesList.length; i++) {
+		if(this.datePattern.test(this.activitiesList[i].innerText)) {
+			this.activitiesList[i].firstChild.disabled = false;
+		};
+		
+	};
+};
+
+var activitiesRegistrationForm = new ActivitiesRegistration();
+
+
+activitiesRegistrationForm.activitiesList.forEach(function (element) {
+	var input = element.firstChild;
+	element.onchange = function () {
+		if (input.checked) {
+			console.log(element.innerText)
+			if (activitiesRegistrationForm.pricePattern.test(element.innerText)) {
+				var price = element.innerText.match(activitiesRegistrationForm.pricePattern)[1]
+				console.log(price);
+			};
+
+			if(activitiesRegistrationForm.datePattern.test(element.innerText)){
+				activitiesRegistrationForm.date = element.innerText.match(activitiesRegistrationForm.datePattern)[0];	
+			} 
+
+			activitiesRegistrationForm.sameDateCheckboxDisabled(element)
+			
+			
+		} else {
+			activitiesRegistrationForm.checkboxesEnabled();
+		};
+	};
+});
 	
 	//c) as user selects activities total to pay is displayed below checkboxes
 //5. --PAYMENT INFO SECTION--
