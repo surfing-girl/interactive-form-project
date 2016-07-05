@@ -74,6 +74,8 @@ function ActivitiesRegistration () {
 	this.datePattern = /(\w+)\s[\d+](\w+)-(\d+)(\w+)/;
 	this.pricePattern = /\$(\d+)/;
 	this.date = '';
+	this.price;
+	this.totalPrice = 0;
 	
 	for (var i = 0; i < activitiesListElements.length; i++) {
 		this.activitiesList.push(activitiesListElements[i]);
@@ -84,7 +86,7 @@ ActivitiesRegistration.prototype.sameDateCheckboxDisabled = function(element) {
 	for (var i = 0; i < this.activitiesList.length; i++) {
 		if(this.datePattern.test(this.activitiesList[i].innerText)) {
 			var otherDate = this.activitiesList[i].innerText.match(this.datePattern)[0];
-			if (this.date == otherDate && this.activitiesList.indexOf(element) != this.activitiesList.indexOf(this.activitiesList[i])) {
+			if (this.date === otherDate && this.activitiesList.indexOf(element) != this.activitiesList.indexOf(this.activitiesList[i])) {
 				this.activitiesList[i].firstChild.disabled = true;
 			};
 		};
@@ -92,10 +94,13 @@ ActivitiesRegistration.prototype.sameDateCheckboxDisabled = function(element) {
 	};
 };
 
-ActivitiesRegistration.prototype.checkboxesEnabled = function() {
+ActivitiesRegistration.prototype.checkboxesEnabled = function(element) {
 	for (var i = 0; i < this.activitiesList.length; i++) {
 		if(this.datePattern.test(this.activitiesList[i].innerText)) {
-			this.activitiesList[i].firstChild.disabled = false;
+			var otherDate = this.activitiesList[i].innerText.match(this.datePattern)[0];
+			if (this.date === otherDate) {
+				this.activitiesList[i].firstChild.disabled = false;
+			};
 		};
 		
 	};
@@ -107,22 +112,26 @@ var activitiesRegistrationForm = new ActivitiesRegistration();
 activitiesRegistrationForm.activitiesList.forEach(function (element) {
 	var input = element.firstChild;
 	element.onchange = function () {
-		if (input.checked) {
-			console.log(element.innerText)
-			if (activitiesRegistrationForm.pricePattern.test(element.innerText)) {
-				var price = element.innerText.match(activitiesRegistrationForm.pricePattern)[1]
-				console.log(price);
-			};
-
-			if(activitiesRegistrationForm.datePattern.test(element.innerText)){
-				activitiesRegistrationForm.date = element.innerText.match(activitiesRegistrationForm.datePattern)[0];	
-			} 
-
-			activitiesRegistrationForm.sameDateCheckboxDisabled(element)
-			
-			
+		if(activitiesRegistrationForm.datePattern.test(element.innerText)){
+			activitiesRegistrationForm.date = element.innerText.match(activitiesRegistrationForm.datePattern)[0];	
 		} else {
+			activitiesRegistrationForm.date = '';
+		}
+
+		if (input.checked) {
+			if (activitiesRegistrationForm.pricePattern.test(element.innerText)) {
+				activitiesRegistrationForm.price = parseInt(element.innerText.match(activitiesRegistrationForm.pricePattern)[1])
+				activitiesRegistrationForm.totalPrice += activitiesRegistrationForm.price;
+				console.log(activitiesRegistrationForm.totalPrice);
+			} else {
+				activitiesRegistrationForm.price='';
+			};
+			activitiesRegistrationForm.sameDateCheckboxDisabled(element);	
+		} else { 
 			activitiesRegistrationForm.checkboxesEnabled();
+			activitiesRegistrationForm.totalPrice -= activitiesRegistrationForm.price;
+
+			console.log(activitiesRegistrationForm.totalPrice);
 		};
 	};
 });
