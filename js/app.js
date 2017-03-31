@@ -1,6 +1,15 @@
+/* jshint browser: true */
+/*globals $:false */
+/* jshint -W097 */
+/*jshint esversion: 6 */
+/* jshint expr: true */
 'use strict';
 
-//1. Set focus on the first field-->autofocus?
+/* Set focus on the first field */
+
+window.onload = function() {
+  document.getElementById("name").focus();
+};
 
 /* -----JOB ROLE SECTION----- */
 
@@ -22,8 +31,8 @@ OtherJobRoleInit.prototype.otherJobRoleInputRevealing = function () {
 		} else {
 			$('#other-title').hide('slow');
 			$('#other-title').prev().prev().hide('slow');
-		};
-	})
+		}
+	});
 };
 
 /* Making instation of OtherJobRole class and calling its method */
@@ -35,7 +44,7 @@ otherJobSelector.otherJobRoleInputRevealing();
 
 function TShirtInfoInit() {
 	this.tshirtDesignSelect = document.getElementById('design');
-	this.tshirtColorMenuDiv = document.getElementById('colors-js-puns')
+	this.tshirtColorMenuDiv = document.getElementById('colors-js-puns');
 	this.tshirtColorMenu = document.getElementById('color');
 	this.tshirtColorOptionsList = this.tshirtColorMenu.children;
 	this.designsList = this.tshirtDesignSelect.children;
@@ -56,17 +65,17 @@ TShirtInfoInit.prototype.showingSelectedThemeColors = function () {
 				this.tshirtColorOptionsList[i].style.display = 'block';
 			} else {
 				this.tshirtColorOptionsList[i].style.display = 'none';
-			};
+			}
 		} else if(this.tshirtDesignSelect.value === 'heart js') {
 			this.tshirtColorOptionsList[3].selected = true;
 			if (this.pattern2.test(colorInner)) {
 				this.tshirtColorOptionsList[i].style.display = 'block';
 			} else {
 				this.tshirtColorOptionsList[i].style.display = 'none';
-			};
-		};
-	};
-}
+			}
+		}
+	}
+};
 
 TShirtInfoInit.prototype.addOnChangeTShirtFormHandler = function () {
 	this.tshirtDesignSelect.addEventListener('change', (e) => {
@@ -106,10 +115,10 @@ ActivitiesRegistrationInit.prototype.sameDateCheckboxDisabled = function(element
 			if (this.date === otherDate && this.activitiesList.indexOf(element) != this.activitiesList.indexOf(this.activitiesList[i])) {
 				this.activitiesList[i].firstChild.disabled = true;
 				this.activitiesList[i].style.color = 'grey';
-			};
-		};
+			}
+		}
 
-	};
+	}
 };
 
 /* Function enables checkboxes when conflicted date was unchecked */
@@ -121,10 +130,10 @@ ActivitiesRegistrationInit.prototype.checkboxesEnabled = function(element) {
 			if (this.date === otherDate) {
 				this.activitiesList[i].firstChild.disabled = false;
 				this.activitiesList[i].style.color = 'black';
-			};
-		};
+			}
+		}
 
-	};
+	}
 };
 
 /* Function prints total price */
@@ -158,7 +167,7 @@ activitiesRegistrationForm.activitiesList.forEach(function (element) {
 			activitiesRegistrationForm.checkboxesEnabled();
 			activitiesRegistrationForm.totalPrice -= activitiesRegistrationForm.price;
 			activitiesRegistrationForm.showTotalPrice('Total: ' + activitiesRegistrationForm.totalPrice);
-		};
+		}
 	});
 });
 
@@ -193,7 +202,7 @@ var newPaymentInfo = new PaymentInfo();
 
 document.getElementById('payment').addEventListener('change', (e) => {
 	newPaymentInfo.onchangeHandler();
-})
+});
 
 /* -----FORM VALIDATION----- */
 
@@ -273,7 +282,7 @@ FormValidator.prototype.activitiesValidator = function() {
 FormValidator.prototype.ccValidator = function() {
 	document.getElementById('payment').addEventListener('change', (e) => {
 		this.enableSubmitEvent();
-	})
+	});
 };
 
 /* Function returns true when every condition is true  */
