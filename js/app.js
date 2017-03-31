@@ -228,19 +228,48 @@ FormValidator.prototype.isEmailValid = function () {
 };
 
 FormValidator.prototype.isCardNumberValid = function () {
-	return this.isNumberPattern.test(this.ccNumber.value) && this.ccNumber.value.length >= 13 && this.ccNumber.value.length <= 16;
+	return this.isNumberPattern.test(this.ccNumber.value) && this.ccNumber.value.length >= 13 && this.ccNumber.value.length <= 16 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
 };
 
 FormValidator.prototype.isZipValid = function () {
-	return this.isNumberPattern.test(this.zip.value) && this.zip.value.length === 5;
+	return this.isNumberPattern.test(this.zip.value) && this.zip.value.length === 5 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
 };
 
 FormValidator.prototype.isCvvValid = function () {
-	return this.isNumberPattern.test(this.cvv.value) && this.cvv.value.length === 3;
+	return this.isNumberPattern.test(this.cvv.value) && this.cvv.value.length === 3 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
+};
+
+FormValidator.prototype.isActivitiesValid = function () {
+	let result = false;
+	$('.activities label>input').each(function(e, el) {
+		if (el.checked) {
+			result = true;
+		}
+	});
+	return result;
+};
+
+FormValidator.prototype.activitiesValidator = function() {
+	$('.activities label>input').each( (e, el) => {
+		el.addEventListener('change', (e) => {
+				this.enableSubmitEvent();
+				if (!this.isActivitiesValid()) {
+					$('#total').next().show('slow');
+				} else {
+					$('#total').next().hide('slow');
+				}
+		});
+	});
+};
+
+FormValidator.prototype.ccValidator = function() {
+	document.getElementById('payment').addEventListener('change', (e) => {
+		this.enableSubmitEvent();
+	})
 };
 
 FormValidator.prototype.canSubmit = function () {
-	return !this.isFieldEmpty('#name') && this.isEmailValid() && this.isCardNumberValid() && this.isZipValid() && this.isCvvValid();
+	return !this.isFieldEmpty('#name') && this.isEmailValid() && this.isCardNumberValid() && this.isZipValid() && this.isCvvValid() && this.isActivitiesValid();
 };
 
 FormValidator.prototype.textFieldEmptyEvent = function (selector) {
@@ -282,27 +311,6 @@ FormValidator.prototype.cvvConfirmationEvent = function () {
 	this.showingErrorMessageCondition(!this.isCvvValid(), '#cvv', this.invalidCvv);
 };
 
-FormValidator.prototype.activitiesValidator = function() {
-	const checkedList = [];
-	$('.activities label>input').each(function(e, el) {
-		el.addEventListener('change', (e) => {
-			if (el.checked) {
-				checkedList.push(el);
-			} else {
-				checkedList.splice(checkedList.indexOf(el),1);
-			};
-			if (checkedList.length === 0) {
-				$('#total').next().show('slow');
-				//document.getElementsByTagName('button')[0].disabled = true;
-			} else {
-				$('#total').next().hide('slow');
-				//document.getElementsByTagName('button')[0].disabled = false;
-			}
-		})
-	});
-
-}
-
 FormValidator.prototype.enableSubmitEvent = function () {
 	$("button[type=submit]").prop("disabled", !this.canSubmit());
 };
@@ -315,6 +323,7 @@ FormValidator.prototype.addValidationEvent = function () {
 	$('#zip').keyup(() => {this.zipConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
 	$('#cvv').keyup(() => {this.cvvConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
 	this.activitiesValidator();
+	this.ccValidator();
 };
 
 var newFormValidator = new FormValidator();
