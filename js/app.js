@@ -197,6 +197,8 @@ document.getElementById('payment').addEventListener('change', (e) => {
 
 /* -----FORM VALIDATION----- */
 
+/* Init function with selected html elements, error messages text and hiding those messages */
+
 function FormValidator() {
 	this.nameField = document.getElementById('name');
 	this.emailField = document.getElementById('mail');
@@ -218,6 +220,8 @@ function FormValidator() {
 	$('#total').after('<p style="color: red">Please select at least one activity</p>');
 	$('#total').next().hide();
 }
+
+/* Boolean functions, which check if input matches the pattern */
 
 FormValidator.prototype.isFieldEmpty = function (selector) {
 	return $(selector).val() === '';
@@ -249,6 +253,8 @@ FormValidator.prototype.isActivitiesValid = function () {
 	return result;
 };
 
+/* Function enables button on change activities and showing the message */
+
 FormValidator.prototype.activitiesValidator = function() {
 	$('.activities label>input').each( (e, el) => {
 		el.addEventListener('change', (e) => {
@@ -262,15 +268,21 @@ FormValidator.prototype.activitiesValidator = function() {
 	});
 };
 
+/* Function enables button on change in payment menu */
+
 FormValidator.prototype.ccValidator = function() {
 	document.getElementById('payment').addEventListener('change', (e) => {
 		this.enableSubmitEvent();
 	})
 };
 
+/* Function returns true when every condition is true  */
+
 FormValidator.prototype.canSubmit = function () {
 	return !this.isFieldEmpty('#name') && this.isEmailValid() && this.isCardNumberValid() && this.isZipValid() && this.isCvvValid() && this.isActivitiesValid();
 };
+
+/* Function changes input styles and shows error message when field is empty */
 
 FormValidator.prototype.textFieldEmptyEvent = function (selector) {
 	const labelName = $(selector).prev().prev().text();
@@ -284,6 +296,8 @@ FormValidator.prototype.textFieldEmptyEvent = function (selector) {
 	}
 };
 
+/* Function changes input styles and shows error message when input value doesn't match the pattern  */
+
 FormValidator.prototype.showingErrorMessageCondition = function (condition, selector, message) {
 	$(selector).prev().text(message);
 	if (condition) {
@@ -294,6 +308,8 @@ FormValidator.prototype.showingErrorMessageCondition = function (condition, sele
 		$(selector).css('border-color', 'green');
 	}
 };
+
+/* Functions change messages depends on error */
 
 FormValidator.prototype.emailConfirmationEvent = function () {
 	if (this.isFieldEmpty('#mail')) {
@@ -327,6 +343,8 @@ FormValidator.prototype.cvvConfirmationEvent = function () {
 	}
 };
 
+/* Function enables/disables submit button */
+
 FormValidator.prototype.enableSubmitEvent = function () {
 	$("button[type=submit]").prop("disabled", !this.canSubmit());
 };
@@ -342,7 +360,6 @@ FormValidator.prototype.addValidationEvent = function () {
 };
 
 var newFormValidator = new FormValidator();
-
 
 newFormValidator.addValidationEvent();
 newFormValidator.enableSubmitEvent();
