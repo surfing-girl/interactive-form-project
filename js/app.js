@@ -224,19 +224,19 @@ FormValidator.prototype.isFieldEmpty = function (selector) {
 };
 
 FormValidator.prototype.isEmailValid = function () {
-	return this.emailPattern.test(this.emailField.value);
+	return !this.isFieldEmpty('#mail') && this.emailPattern.test(this.emailField.value);
 };
 
 FormValidator.prototype.isCardNumberValid = function () {
-	return this.isNumberPattern.test(this.ccNumber.value) && this.ccNumber.value.length >= 13 && this.ccNumber.value.length <= 16 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
+	return !this.isFieldEmpty('#cc-num') && this.isNumberPattern.test(this.ccNumber.value) && this.ccNumber.value.length >= 13 && this.ccNumber.value.length <= 16 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
 };
 
 FormValidator.prototype.isZipValid = function () {
-	return this.isNumberPattern.test(this.zip.value) && this.zip.value.length === 5 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
+	return !this.isFieldEmpty('#zip') && this.isNumberPattern.test(this.zip.value) && this.zip.value.length === 5 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
 };
 
 FormValidator.prototype.isCvvValid = function () {
-	return this.isNumberPattern.test(this.cvv.value) && this.cvv.value.length === 3 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
+	return !this.isFieldEmpty('#cvv') && this.isNumberPattern.test(this.cvv.value) && this.cvv.value.length === 3 || newPaymentInfo.paymentInfoMenu.value === 'paypal' || newPaymentInfo.paymentInfoMenu.value === 'bitcoin';
 };
 
 FormValidator.prototype.isActivitiesValid = function () {
@@ -296,19 +296,35 @@ FormValidator.prototype.showingErrorMessageCondition = function (condition, sele
 };
 
 FormValidator.prototype.emailConfirmationEvent = function () {
-	this.showingErrorMessageCondition(!this.isEmailValid(), '#mail', this.invalidMail);
+	if (this.isFieldEmpty('#mail')) {
+		this.textFieldEmptyEvent('#mail');
+	} else {
+		this.showingErrorMessageCondition(!this.isEmailValid(), '#mail', this.invalidMail);
+	}
 };
 
 FormValidator.prototype.creditCardConfirmationEvent = function () {
-	this.showingErrorMessageCondition(!this.isCardNumberValid(), '#cc-num', this.invalidCCNom);
+	if (this.isFieldEmpty('#cc-num')) {
+		this.textFieldEmptyEvent('#cc-num');
+	} else {
+		this.showingErrorMessageCondition(!this.isCardNumberValid(), '#cc-num', this.invalidCCNom);
+	}
 };
 
 FormValidator.prototype.zipConfirmationEvent = function () {
-	this.showingErrorMessageCondition(!this.isZipValid(), '#zip', this.invalidZip);
+	if (this.isFieldEmpty('#zip')) {
+		this.textFieldEmptyEvent('#zip');
+	} else {
+		this.showingErrorMessageCondition(!this.isZipValid(), '#zip', this.invalidZip);
+	}
 };
 
 FormValidator.prototype.cvvConfirmationEvent = function () {
-	this.showingErrorMessageCondition(!this.isCvvValid(), '#cvv', this.invalidCvv);
+	if (this.isFieldEmpty('#cvv')) {
+		this.textFieldEmptyEvent('#cvv');
+	} else {
+		this.showingErrorMessageCondition(!this.isCvvValid(), '#cvv', this.invalidCvv);
+	}
 };
 
 FormValidator.prototype.enableSubmitEvent = function () {
@@ -317,11 +333,10 @@ FormValidator.prototype.enableSubmitEvent = function () {
 
 FormValidator.prototype.addValidationEvent = function () {
 	$('#name').focusout(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.enableSubmitEvent()});
-	//$('#other-title').keyup(() => {this.textFieldEmptyEvent('#other-title')}).keyup(() => {this.enableSubmitEvent()});
-	$('#mail').keyup(() => {this.emailConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
-	$('#cc-num').keyup(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
-	$('#zip').keyup(() => {this.zipConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
-	$('#cvv').keyup(() => {this.cvvConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
+	$('#mail').focusout(() => {this.emailConfirmationEvent()}).keyup(() => {this.emailConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
+	$('#cc-num').focusout(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
+	$('#zip').focusout(() => {this.zipConfirmationEvent()}).keyup(() => {this.zipConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
+	$('#cvv').focusout(() => {this.cvvConfirmationEvent()}).keyup(() => {this.cvvConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
 	this.activitiesValidator();
 	this.ccValidator();
 };
