@@ -374,6 +374,8 @@ FormValidator.prototype.hideSubmitMessage = function () {
 	});
 };
 
+/* Function shows error messages based on error type on keyup and focusout */
+
 FormValidator.prototype.addValidationEvent = function () {
 	$('#name').focusout(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.hideSubmitMessage()});
 	$('#mail').focusout(() => {this.emailConfirmationEvent()}).keyup(() => {this.emailConfirmationEvent()}).keyup(() => {this.hideSubmitMessage()});
