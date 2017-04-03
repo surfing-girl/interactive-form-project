@@ -226,8 +226,11 @@ function FormValidator() {
 		$(this).prev().hide();
 	});
 
-	$('#total').after('<p style="color: red">Please select at least one activity</p>');
+	$('#total').after('<p style="color: red">Please, select at least one activity.</p>');
 	$('#total').next().hide();
+
+	$('button').after('<p style="color: red" id="submit-message">Please, check your entry and try again.</p>');
+	$('button').next().hide();
 }
 
 /* Boolean functions, which check if input matches the pattern */
@@ -267,21 +270,21 @@ FormValidator.prototype.isActivitiesValid = function () {
 FormValidator.prototype.activitiesValidator = function() {
 	$('.activities label>input').each( (e, el) => {
 		el.addEventListener('change', (e) => {
-				this.enableSubmitEvent();
 				if (!this.isActivitiesValid()) {
 					$('#total').next().show('slow');
 				} else {
 					$('#total').next().hide('slow');
+					this.hideSubmitMessage();
 				}
 		});
 	});
 };
 
-/* Function enables button on change in payment menu */
+/* Function hides error message on change in payment menu */
 
 FormValidator.prototype.ccValidator = function() {
 	document.getElementById('payment').addEventListener('change', (e) => {
-		this.enableSubmitEvent();
+		$('#submit-message').hide();
 	});
 };
 
@@ -352,18 +355,41 @@ FormValidator.prototype.cvvConfirmationEvent = function () {
 	}
 };
 
-/* Function enables/disables submit button */
+/* Function enables/disables form submission  */
 
 FormValidator.prototype.enableSubmitEvent = function () {
-	$("button[type=submit]").prop("disabled", !this.canSubmit());
+	$("form").unbind().submit((e) => {
+		if (!this.canSubmit()) {
+			e.preventDefault();
+			$('button').next().show('slow');
+		}
+ 	});
+};
+
+FormValidator.prototype.hideSubmitMessage = function () {
+	$('#submit-message').css('display', (index) => {
+		if(this.canSubmit()) {
+			return index = 'none';
+		}
+	});
 };
 
 FormValidator.prototype.addValidationEvent = function () {
-	$('#name').focusout(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.enableSubmitEvent()});
-	$('#mail').focusout(() => {this.emailConfirmationEvent()}).keyup(() => {this.emailConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
-	$('#cc-num').focusout(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
-	$('#zip').focusout(() => {this.zipConfirmationEvent()}).keyup(() => {this.zipConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
-	$('#cvv').focusout(() => {this.cvvConfirmationEvent()}).keyup(() => {this.cvvConfirmationEvent()}).keyup(() => {this.enableSubmitEvent()});
+	$('#name').focusout(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.textFieldEmptyEvent('#name')}).keyup(() => {this.hideSubmitMessage()});
+	$('#mail').focusout(() => {this.emailConfirmationEvent()}).keyup(() => {this.emailConfirmationEvent()}).keyup(() => {this.hideSubmitMessage()});
+	$('#cc-num').focusout(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.creditCardConfirmationEvent()}).keyup(() => {this.hideSubmitMessage()});
+	$('#zip').focusout(() => {this.zipConfirmationEvent()}).keyup(() => {this.zipConfirmationEvent()}).keyup(() => {this.hideSubmitMessage()});
+	$('#cvv').focusout(() => {this.cvvConfirmationEvent()}).keyup(() => {this.cvvConfirmationEvent()}).keyup(() => {this.hideSubmitMessage()});
+	$('button').click(() => {this.emailConfirmationEvent();
+				this.creditCardConfirmationEvent();
+				this.zipConfirmationEvent();
+				this.cvvConfirmationEvent();
+				if (!this.isActivitiesValid()) {
+					$('#total').next().show('slow');
+				} else {
+					$('#total').next().hide('slow');
+				}
+		});
 	this.activitiesValidator();
 	this.ccValidator();
 };
